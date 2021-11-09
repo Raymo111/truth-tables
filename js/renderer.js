@@ -19,7 +19,7 @@ function prettyPrintTruthTable(parseResult, id) {
 	generateTruthTable(parseResult, outputRow(table));
 
 	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
-	if (id === "expressionInput2") {
+	if (id === 2 && table.rows.length === document.querySelector("#table-target1 table").rows.length) {
         
     }
 
