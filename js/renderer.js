@@ -22,10 +22,10 @@ function prettyPrintTruthTable(parseResult, id) {
 	if (id === 2) {
 		var t1r = document.querySelector("#table-target1 table").rows
 		if (table.rows.length === t1r.length) {
+			var row = table.rows[i]
 			var l1 = t1r[0].cells.length,
-				l2 = table.rows.cells.length
+				l2 = row.cells.length
 			for (var i = 1; i < t1r.length; i++) {
-				var row = table.rows[i]
 				if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
 					for (var i = 0; i < l2; i++) {
 						row.cells[i].style.backgroundColor = "red";
