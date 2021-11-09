@@ -39,7 +39,7 @@ function prettyPrintTruthTable(parseResult, id) {
 			var l1 = t1r[0].cells.length,
 				l2 = table.rows[0].cells.length
 			for (var i = 1; i < t1r.length; i++) {
-				var row = t1r.rows[i]
+				var row = t1r[i]
 				if (table.rows[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
 					for (var j = 0; j < l2; j++) {
 						row.cells[j].style.backgroundColor = "darkred";
