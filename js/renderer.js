@@ -11,16 +11,18 @@
  */
 function prettyPrintTruthTable(parseResult, id) {
 	var table = createTableElement();
-	
+
 	/* Create the header, which needs knowledge of the variables and the expression. */
 	createTableHeader(table, parseResult);
-	
+
 	/* Now, go generate the body of the table. */
 	generateTruthTable(parseResult, outputRow(table));
 
 	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
-	
-	
+	if (id === "expressionInput2") {
+        
+    }
+
 	/* Display the table. */
 	displayTable(table, id);
 }
@@ -51,7 +53,7 @@ function createTableHeader(table, parseResult) {
 		cell.innerHTML = parseResult.variables[i];
 		header.appendChild(cell);
 	}
-	
+
 	/* Add one column for the overall expression. */
 	var lastCell = document.createElement("th");
 	lastCell.className = "expression";
@@ -59,8 +61,8 @@ function createTableHeader(table, parseResult) {
 	header.appendChild(lastCell);
 
 	table.appendChild(header);
-} 
- 
+}
+
 /* Function: outputRow
  *
  * Given a table to output a row to, creates a callback that outputs a row to that table.
@@ -68,7 +70,7 @@ function createTableHeader(table, parseResult) {
 function outputRow(table) {
 	return function(assignment, result) {
 		var row = document.createElement("tr");
-		
+
 		/* Show the value of each variable. */
 		for (var i = 0; i < assignment.length; i++) {
 			var cell = document.createElement("td");
@@ -76,13 +78,13 @@ function outputRow(table) {
 			cell.innerHTML = (Number(assignment[i]));
 			row.appendChild(cell);
 		}
-		
+
 		/* Show the value of the expression. */
 		var lastCell = document.createElement("td");
 		//lastCell.innerHTML = (result? "T" : "F");
 		lastCell.innerHTML = (Number(result));
 		row.appendChild(lastCell);
-		
+
 		table.appendChild(row);
 	}
 }
@@ -96,7 +98,7 @@ function displayTable(table, id) {
 	var holder = document.createElement("div");
 	holder.className = "truth-table-holder";
 	holder.appendChild(table);
-	
+
 	showObject(holder, id);
 }
 
@@ -107,12 +109,12 @@ function displayTable(table, id) {
 function showObject(object, id) {
 	/* Find the div to hold the object. */
 	var target = document.getElementById("table-target" + id);
-	
+
 	/* If it already has objects, remove them. */
 	while (target.children.length !== 0) {
 		target.removeChild(target.children[0]);
 	}
-	
+
 	/* Install our object in that spot. */
 	target.appendChild(object);
 }
@@ -126,11 +128,11 @@ function showObject(object, id) {
 function displayCompileError(input, error, id) {
 	/* Create a div to hold the result. */
 	var holder = document.createElement("div");
-	
+
 	/* Create the top div, which shows the original input. */
 	holder.appendChild(createHighlightedErrorBox(input, error));
 	holder.appendChild(createDescriptionBox(error));
-	
+
 	showObject(holder, id);
 }
 
@@ -143,22 +145,22 @@ function createHighlightedErrorBox(input, error) {
 	/* Create a div to house the result. */
 	var box = document.createElement("div");
 	box.className = "syntax-error-holder";
-	
+
 	/* Create a span of the characters up to, but not including, the actual error. */
 	var prefix = document.createElement("span");
 	prefix.className = "syntax-okay";
 	prefix.textContent = input.substring(0, error.start);
-	
+
 	/* Create a span of the characters containing the error. */
 	var problem = document.createElement("span");
 	problem.className = "syntax-error";
 	problem.textContent = input.substring(error.start, error.end);
-	
+
 	/* Create a span of characters containing everything after the error. */
 	var suffix = document.createElement("span");
 	suffix.className = "syntax-okay";
 	suffix.textContent = input.substring(error.end);
-	
+
 	box.appendChild(prefix);
 	box.appendChild(problem);
 	box.appendChild(suffix);
