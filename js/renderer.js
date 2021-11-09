@@ -19,7 +19,7 @@ function prettyPrintTruthTable(parseResult, id) {
 	generateTruthTable(parseResult, outputRow(table));
 
 	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
-	if (id === 2) {
+	if (id === 2 && document.querySelector("#table-target1 table") != null) {
 		var t1r = document.querySelector("#table-target1 table").rows
 		if (table.rows.length === t1r.length) {
 			var l1 = t1r[0].cells.length,
@@ -33,7 +33,7 @@ function prettyPrintTruthTable(parseResult, id) {
 				}
 			}
 		}
-	} else if (id === 1) {
+	} else if (id === 1 && document.querySelector("#table-target2 table") != null) {
 		var t1r = document.querySelector("#table-target2 table").rows
 		if (table.rows.length === t1r.length) {
 			var l1 = t1r[0].cells.length,
