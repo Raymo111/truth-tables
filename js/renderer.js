@@ -23,7 +23,7 @@ function prettyPrintTruthTable(parseResult, id) {
 		var t1r = document.querySelector("#table-target1 table").rows
 		if (table.rows.length === t1r.length) {
 			var l1 = t1r[0].cells.length,
-				l2 = row.cells.length
+				l2 = table.rows.cells.length
 			for (var i = 1; i < t1r.length; i++) {
 				var row = table.rows[i]
 				if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
