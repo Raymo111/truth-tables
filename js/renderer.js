@@ -26,11 +26,11 @@ function prettyPrintTruthTable(parseResult, id) {
 				l2 = table.rows[0].cells.length
 			for (var i = 1; i < t1r.length; i++) {
 				var row = table.rows[i]
-				if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
-					for (var i = 0; i < l2; i++) {
-						row.cells[i].style.backgroundColor = "red";
-					}
-				}
+				// if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
+				// 	for (var i = 0; i < l2; i++) {
+				// 		row.cells[i].style.backgroundColor = "red";
+				// 	}
+				// }
 			}
 		}
 	}
