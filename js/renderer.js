@@ -17,6 +17,9 @@ function prettyPrintTruthTable(parseResult, id) {
 	
 	/* Now, go generate the body of the table. */
 	generateTruthTable(parseResult, outputRow(table));
+
+	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
+	
 	
 	/* Display the table. */
 	displayTable(table, id);
