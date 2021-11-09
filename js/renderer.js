@@ -19,9 +19,18 @@ function prettyPrintTruthTable(parseResult, id) {
 	generateTruthTable(parseResult, outputRow(table));
 
 	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
-	if (id === 2 && table.rows.length === document.querySelector("#table-target1 table").rows.length) {
-        
-    }
+	var t1r = document.querySelector("#table-target1 table").rows
+	if (id === 2 && table.rows.length === t1r.length) {
+		var l1 = t1r[0].cells.length, l2 = row.cells.length
+		for (var i = 1; i < t1r.length; i++) {
+			var row = table.rows[i]
+			if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
+				for (var i = 0; i < l2; i++) {
+					row.cells[i].style.backgroundColor = "red";
+				}
+			}
+		}
+	}
 
 	/* Display the table. */
 	displayTable(table, id);
