@@ -16,7 +16,7 @@
 kScannerConstants = {
 	EOF: "$"						// EOF marker placed internally in the string
 }
- 
+
 /* Function: scan(input)
  *
  * Scans the input string and produces an object with two fields:
@@ -42,12 +42,12 @@ kScannerConstants = {
 function scan(input) {
   /* Check that the input does not contain any invalid characters. */
   checkIntegrity(input);
-  
+
   /* Get a preliminary scan in which variables are named rather than
    * numbered.
    */
   var preliminary = preliminaryScan(input);
-  
+
   /* Convert the preliminary scan into the result by sorting variables by
    * name and renumbering them.
    */
@@ -68,15 +68,15 @@ function preliminaryScan(input) {
    * EOF marker and eliminates a lot of special cases in input handling.
    */
   input += kScannerConstants.EOF;
-  
+
   /* Run the scan! */
   var i = 0;            // Index into the string
   var variableSet = {}; // Set of variables in use
   var tokens = [];      // List of tokens
-  
+
   while (true) {
     var curr = input.charAt(i); // Current character
-    
+
     /* Stop on EOF if we find it. */
     if (curr === kScannerConstants.EOF) {
     	tokens.push(makeIdentityToken(curr, i));
@@ -93,7 +93,7 @@ function preliminaryScan(input) {
     	 */
     	var variable = scanVariable(input, i, variableSet);
     	tokens.push(makeVariableToken(variable, i, i + variable.length));
-    	
+
     	/* Skip past the token characters. */
     	i += variable.length;
     }
@@ -101,9 +101,9 @@ function preliminaryScan(input) {
     else if (isOperatorStart(input, i)) {
     	var token = tryReadOperator(input, i);
     	/* token should not be null here. */
-    	
+
     	tokens.push(makeIdentityToken(token, i));
-    	
+
     	/* Skip the characters we just read. */
     	i += token.length;
     }
@@ -133,7 +133,7 @@ function makeIdentityToken(str, index) {
  * Given a variable index, creates a token holding that variable index.
  */
 function makeVariableToken(varIndex, start, end) {
-	return { type: "variable", 
+	return { type: "variable",
 	         index: varIndex,
 	         "start": start,
 	         "end": end };
@@ -157,17 +157,17 @@ function isVariableStart(input, index) {
  * If a variable name can be read, it is returned. If not, this function returns
  * null.
  */
-function tryReadVariableName(input, index) {	
+function tryReadVariableName(input, index) {
 	/* Need to start with a letter or underscore. */
 	if (!/[A-Za-z_]/.test(input.charAt(index))) return null;
 
-	/* Keep reading characters while it's possible to do so. */	
+	/* Keep reading characters while it's possible to do so. */
 	var result = "";
 	while (/[A-Za-z_0-9]/.test(input.charAt(index))) {
 		result += input.charAt(index);
-		index++;	
+		index++;
 	}
-	
+
 	/* Return the result as long as it isn't a reserved word. */
 	return isReservedWord(result)? null : result;
 }
@@ -194,7 +194,7 @@ function isReservedWord(token) {
 function scanVariable(input, index, variableSet) {
 	var variableName = tryReadVariableName(input, index);
 	/* variableName should not be null here, by contract. */
-	
+
 	variableSet[variableName] = true;
 	return variableName;
 }
@@ -217,7 +217,7 @@ function tryReadOperator(input, index) {
   /* TODO: Clean this up a bit? This was fine when we had only a few symbols, but
    * with the addition of the LaTeX operators this is getting a bit unwieldy.
    */
-   
+
   /* Look in reverse order of length so that we use maximal-munch. */
   /* Case 1: Fifteen-character operators. */
 	if (index < input.length - 14) {
@@ -226,7 +226,7 @@ function tryReadOperator(input, index) {
   		return fifteenChars;
   	}
   }
-	
+
   /* Case 2: Eleven-character operators. */
 	if (index < input.length - 10) {
   	var elevenChars = input.substring(index, index + 11);
@@ -242,7 +242,7 @@ function tryReadOperator(input, index) {
   		return sevenChars;
   	}
   }
-	
+
 	/* Case 4: Six-character operators */
 	if (index < input.length - 5) {
   	var sixChars = input.substring(index, index + 6);
@@ -250,7 +250,7 @@ function tryReadOperator(input, index) {
   		return sixChars;
   	}
   }
-	
+
 	/* Case 5: Five-character operators like "false" */
 	if (index < input.length - 4) {
   	var fiveChars = input.substring(index, index + 5);
@@ -259,7 +259,7 @@ function tryReadOperator(input, index) {
   		return fiveChars;
   	}
   }
-	
+
 	/* Case 6: Four-character operators like "true" */
 	if (index < input.length - 3) {
   	var fourChars = input.substring(index, index + 4);
@@ -269,7 +269,7 @@ function tryReadOperator(input, index) {
   		return fourChars;
   	}
   }
-	
+
 	/* Case 7: Three-char operators like <-> */
 	if (index < input.length - 2) {
   	var threeChars = input.substring(index, index + 3);
@@ -279,7 +279,7 @@ function tryReadOperator(input, index) {
   		return threeChars;
   	}
   }
-	
+
 	/* Case 8: Two-char operator like ->, /\, \/ */
 	if (index < input.length - 1) {
   	var twoChars = input.substring(index, index + 2);
@@ -289,12 +289,12 @@ function tryReadOperator(input, index) {
   		return twoChars;
   	}
   }
-	
+
 	/* Case 9: Single-char operator like (, ), ~, T, F. */
-	if (/[()~TF10^!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/.test(input.charAt(index))) {
+	if (/[,()~TF10^!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/.test(input.charAt(index))) {
 		return input.charAt(index);
 	}
-	
+
 	/* If we got here, nothing matched. */
 	return null;
 }
@@ -340,7 +340,7 @@ function scannerFail(why, start, end) {
  * If any disallowed characters are present, triggers an error.
  */
 function checkIntegrity(input) {
-	var okayChars = /[A-Za-z_0-9\\\/<>\-~^()\s\&\|\=\!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/;
+	var okayChars = /[A-Za-z_0-9\\\/<>\-~^(),\s\&\|\=\!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/;
 	for (var i = 0; i < input.length; i++) {
 		if (!okayChars.test(input.charAt(i))) {
 			scannerFail("Illegal character", i, i + 1);
@@ -364,22 +364,22 @@ function numberVariables(preliminary) {
 	for (var key in preliminary.variableSet) {
 		variables.push(key);
 	}
-	
+
 	/* Sort the variables alphabetically. */
 	variables.sort();
-	
+
 	/* Invert the array into the variable set for quick lookups. */
 	for (var i = 0; i < variables.length; i++) {
 		preliminary.variableSet[variables[i]] = i;
 	}
-	
+
 	/* Change each variable's name to its index. */
 	for (var j = 0; j < preliminary.tokens.length; j++) {
 		if (preliminary.tokens[j].type === "variable") {
 			preliminary.tokens[j].index = preliminary.variableSet[preliminary.tokens[j].index];
 		}
 	}
-	
+
 	return {
 		tokens: preliminary.tokens,
 		"variables": variables
