@@ -264,6 +264,7 @@ function isBinaryOperator(token) {
 	       token.type === "->"  ||
 	       token.type === "/\\" ||
 	       token.type === "\\/" ||
+	       token.type === "\u22A2" ||
 	       token.type === ",";
 }
 
@@ -275,11 +276,12 @@ function isBinaryOperator(token) {
  */
 function priorityOf(token) {
 	if (token.type === kScannerConstants.EOF) return -1;
-	if (token.type === ",") return 0;
-	if (token.type === "<->") return 1;
-	if (token.type === "->")  return 2;
-	if (token.type === "\\/") return 3;
-	if (token.type === "/\\") return 4;
+	if (token.type === "\u22A2") return 0;
+	if (token.type === ",") return 1;
+	if (token.type === "<->") return 2;
+	if (token.type === "->")  return 3;
+	if (token.type === "\\/") return 4;
+	if (token.type === "/\\") return 5;
 	unreachable("Should never need the priority of " + token.type);
 }
 
@@ -290,7 +292,7 @@ function priorityOf(token) {
  */
 function createOperatorNode(lhs, token, rhs) {
 	if (token.type === "<->") return new iffNode(lhs, rhs);
-	if (token.type === "->")  return new impliesNode(lhs, rhs);
+	if (token.type === "->" || token.type === "\u22A2")  return new impliesNode(lhs, rhs);
 	if (token.type === "\\/") return new orNode(lhs, rhs);
 	if (token.type === "/\\" || token.type === ",") return new andNode(lhs, rhs);
 	unreachable("Should never need to create an operator node from " + token.type);

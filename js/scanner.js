@@ -290,8 +290,8 @@ function tryReadOperator(input, index) {
   	}
   }
 
-	/* Case 9: Single-char operator like (, ), ~, T, F. */
-	if (/[,{}()~TF10^!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/.test(input.charAt(index))) {
+	/* Case 9: Single-char operator like (, ), ~, T, F, ⊢. */
+	if (/[,{}()~TF10^!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC\u22A2\u22A6\u22A7\u22A8]/.test(input.charAt(index))) {
 		return input.charAt(index);
 	}
 
@@ -312,6 +312,7 @@ function translate(input) {
 	if (input === "not" || input === "!" || input === "\u00AC" || input === "\\lnot" || input === "\\neg") return "~";
 	if (input === "\u22A4" || input === "true" || input === "\\top" || input === "1") return "T";
 	if (input === "\u22A5" || input === "false" || input === "\\bot" || input === "0") return "F";
+	if (input === "\u22A2" || input === "\u22A6" || input === "\u22A7" || input === "\u22A8") return "\u22A2";
 	return input;
 }
 
@@ -340,7 +341,7 @@ function scannerFail(why, start, end) {
  * If any disallowed characters are present, triggers an error.
  */
 function checkIntegrity(input) {
-	var okayChars = /[A-Za-z_0-9\\\/<>\-~^(),{}\s\&\|\=\!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/;
+	var okayChars = /[A-Za-z_0-9\\\/<>\-~^(),{}\s\&\|\=\!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC\u22A2\u22A6\u22A7\u22A8]/;
 	for (var i = 0; i < input.length; i++) {
 		if (!okayChars.test(input.charAt(i))) {
 			scannerFail("Illegal character", i, i + 1);
