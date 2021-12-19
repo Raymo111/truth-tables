@@ -30,7 +30,11 @@ function prettyPrintTruthTable(parseResult, id) {
 					for (var j = 0; j < l2; j++) {
 						row.cells[j].style.backgroundColor = "darkred";
 					}
-				}
+				} else {
+                    for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "";
+					}
+                }
 			}
 		}
 	} else if (id === 1 && document.querySelector("#table-target2 table") != null) {
@@ -44,7 +48,11 @@ function prettyPrintTruthTable(parseResult, id) {
 					for (var j = 0; j < l2; j++) {
 						row.cells[j].style.backgroundColor = "darkred";
 					}
-				}
+				} else {
+                    for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "";
+					}
+                }
 			}
 		}
 	}
