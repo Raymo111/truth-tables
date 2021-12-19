@@ -58,7 +58,7 @@ function parse(input) {
 			/* If it's a parenthesis or negation, push it on the parenthesis stack. We're
 			 * still expecting an operand.
 			 */
-			else if (currToken.type === "(" || currToken.type === "~") {
+			else if (currToken.type === "(" || currToken.type === "{" || currToken.type === "~") {
 				operators.push(currToken);
 			}
 
@@ -71,8 +71,8 @@ function parse(input) {
 					parseError("", 0, 0);
 				}
 
-				/* If the operator stack has an ( on top, there's an unmatched open parenthesis. */
-				if (topOf(operators).type === "(") {
+				/* If the operator stack has an ( pr { on top, there's an unmatched open parenthesis. */
+				if (topOf(operators).type === "(" || topOf(operators).type === "{") {
 					parseError("This open parenthesis has no matching close parenthesis.",
 					           topOf(operators).start, topOf(operators).end);
 				}
@@ -105,7 +105,7 @@ function parse(input) {
 					/* If it's an open parenthesis, we should stop because the current
 					 * operator is being parenthesized for later us.
 					 */
-					if (topOf(operators).type === "(") break;
+					if (topOf(operators).type === "(" || topOf(operators).type === "{") break;
 
 					/* Compare the priority of the stack top to the priority of the current
 					 * operator. We stop if the new operator has priority greater than or
@@ -135,7 +135,9 @@ function parse(input) {
 			 * evaluate them until we come to an open parenthesis. We then still are
 			 * searching for an operator.
 			 */
-			else if (currToken.type === ")") {
+			else if (currToken.type === ")" || currToken.type === "}") {
+				var tmp = currToken.type;
+
 				/* Keep popping operators until we get a close parenthesis. */
 				while (true) {
 					/* If we ran out of operators, we have a mismatched parenthesis. */
@@ -147,11 +149,16 @@ function parse(input) {
 					/* If the top of the stack is an open parenthesis, we should have the
 					 * top of the operand stack containing our value, so we're done.
 					 */
-					if (currOp.type === "(") break;
+					if ((currOp.type === "(" && tmp === ")") || (currOp.type === "{" && tmp === "}")) break;
 
 					/* Otherwise, if the top of the stack is a negation, we have a syntax error. */
 					if (currOp.type === "~") {
 						parseError("Nothing is negated by this operator.", currOp.start, currOp.end);
+					}
+
+					/* Otherwise, if the top of the stack is a diff bracket. */
+					if ((currOp.type === "(" && tmp === "}") || (currOp.type === "{" && tmp === ")")) {
+						parseError("Bad bracket order.", currOp.start, currOp.end);
 					}
 
 					/* Otherwise, it should be an operator. Evaluate it. */
@@ -193,7 +200,7 @@ function parse(input) {
 		 * anything else.
 		 */
 		var mismatchedOp = operators.pop();
-		assert (mismatchedOp.type === "(",
+		assert (mismatchedOp.type === "(" || mismatchedOp.type === "{",
 		        "Somehow missed an operator factoring in EOF (logic error in parser?)");
 
 		parseError("No matching close parenthesis for this open parenthesis.",
