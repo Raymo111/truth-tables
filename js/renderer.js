@@ -32,7 +32,7 @@ function prettyPrintTruthTable(parseResult, id) {
 					}
 				} else {
                     for (var j = 0; j < l2; j++) {
-						row.cells[j].style.backgroundColor = "";
+						row.cells[j].style.backgroundColor = "darkgreen";
 					}
                 }
 			}
@@ -50,7 +50,7 @@ function prettyPrintTruthTable(parseResult, id) {
 					}
 				} else {
                     for (var j = 0; j < l2; j++) {
-						row.cells[j].style.backgroundColor = "";
+						row.cells[j].style.backgroundColor = "darkgreen";
 					}
                 }
 			}
