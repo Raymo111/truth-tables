@@ -1,0 +1,213 @@
+/******************************************************************************
+ * File: renderer.js
+ * Author: Keith Schwarz (htiek@cs.stanford.edu)
+ *
+ * Logic to display results and information to the user.
+ */
+
+/* Function: prettyPrintTruthTable
+ *
+ * Outputs an elegantly-formatted truth table for the given parsed expression.
+ */
+function prettyPrintTruthTable(parseResult, id) {
+	var table = createTableElement();
+
+	/* Create the header, which needs knowledge of the variables and the expression. */
+	createTableHeader(table, parseResult);
+
+	/* Now, go generate the body of the table. */
+	generateTruthTable(parseResult, outputRow(table));
+
+	/* Highlight rows of 2nd table that differ from 1st if same num of rows */
+	if (id === 2 && document.querySelector("#table-target1 table") != null) {
+		var t1r = document.querySelector("#table-target1 table").rows
+		if (table.rows.length === t1r.length) {
+			var l1 = t1r[0].cells.length,
+				l2 = table.rows[0].cells.length
+			for (var i = 1; i < t1r.length; i++) {
+				var row = table.rows[i]
+				if (t1r[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
+					for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "darkred";
+					}
+				} else {
+                    for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "darkgreen";
+					}
+                }
+			}
+		}
+	} else if (id === 1 && document.querySelector("#table-target2 table") != null) {
+		var t1r = document.querySelector("#table-target2 table").rows
+		if (table.rows.length === t1r.length) {
+			var l1 = t1r[0].cells.length,
+				l2 = table.rows[0].cells.length
+			for (var i = 1; i < t1r.length; i++) {
+				var row = t1r[i]
+				if (table.rows[i].cells[l1 - 1].innerText != row.cells[l2 - 1].innerText) {
+					for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "darkred";
+					}
+				} else {
+                    for (var j = 0; j < l2; j++) {
+						row.cells[j].style.backgroundColor = "darkgreen";
+					}
+                }
+			}
+		}
+	}
+
+	/* Display the table. */
+	displayTable(table, id);
+}
+
+/* Function: createTableElement
+ *
+ * Creates a new table element and sets up its properties.
+ */
+function createTableElement() {
+	var result = document.createElement("table");
+	result.className = "truthTable";
+	return result;
+}
+
+/* Function: createTableHeader
+ *
+ * Given a table representing the result of the truth table, creates the header
+ * for the table by listing the variables and the expression in separate columns.
+ */
+function createTableHeader(table, parseResult) {
+	var header = document.createElement("tr");
+	header.className = "header";
+
+	/* Add one column for each variable. */
+	for (var i = 0; i < parseResult.variables.length; i++) {
+		var cell = document.createElement("th");
+		cell.className = "variable";
+		cell.innerHTML = parseResult.variables[i];
+		header.appendChild(cell);
+	}
+
+	/* Add one column for the overall expression. */
+	var lastCell = document.createElement("th");
+	lastCell.className = "expression";
+	lastCell.innerHTML = parseResult.ast.toString(parseResult.variables);
+	header.appendChild(lastCell);
+
+	table.appendChild(header);
+}
+
+/* Function: outputRow
+ *
+ * Given a table to output a row to, creates a callback that outputs a row to that table.
+ */
+function outputRow(table) {
+	return function(assignment, result) {
+		var row = document.createElement("tr");
+
+		/* Show the value of each variable. */
+		for (var i = 0; i < assignment.length; i++) {
+			var cell = document.createElement("td");
+			//cell.innerHTML = (assignment[i]? "T" : "F");
+			cell.innerHTML = (Number(assignment[i]));
+			row.appendChild(cell);
+		}
+
+		/* Show the value of the expression. */
+		var lastCell = document.createElement("td");
+		//lastCell.innerHTML = (result? "T" : "F");
+		lastCell.innerHTML = (Number(result));
+		row.appendChild(lastCell);
+
+		table.appendChild(row);
+	}
+}
+
+/* Function: displayTable
+ *
+ * Displays the specified truth table in the window.
+ */
+function displayTable(table, id) {
+	/* Create a container div to hold the table. */
+	var holder = document.createElement("div");
+	holder.className = "truth-table-holder";
+	holder.appendChild(table);
+
+	showObject(holder, id);
+}
+
+/* Function: showObject
+ *
+ * Displays the specified HTML object in the output box.
+ */
+function showObject(object, id) {
+	/* Find the div to hold the object. */
+	var target = document.getElementById("table-target" + id);
+
+	/* If it already has objects, remove them. */
+	while (target.children.length !== 0) {
+		target.removeChild(target.children[0]);
+	}
+
+	/* Install our object in that spot. */
+	target.appendChild(object);
+}
+
+/* Function: displayCompileError
+ *
+ * Displays the specified compilation error message. The first parameter should
+ * be the actual string provided as input, and the second the error message
+ * that was generated.
+ */
+function displayCompileError(input, error, id) {
+	/* Create a div to hold the result. */
+	var holder = document.createElement("div");
+
+	/* Create the top div, which shows the original input. */
+	holder.appendChild(createHighlightedErrorBox(input, error));
+	holder.appendChild(createDescriptionBox(error));
+
+	showObject(holder, id);
+}
+
+/* Function: createHighlightedErrorBox
+ *
+ * Given the text input and the reported error information, creates an HTML
+ * element highlighting the given error.
+ */
+function createHighlightedErrorBox(input, error) {
+	/* Create a div to house the result. */
+	var box = document.createElement("div");
+	box.className = "syntax-error-holder";
+
+	/* Create a span of the characters up to, but not including, the actual error. */
+	var prefix = document.createElement("span");
+	prefix.className = "syntax-okay";
+	prefix.textContent = input.substring(0, error.start);
+
+	/* Create a span of the characters containing the error. */
+	var problem = document.createElement("span");
+	problem.className = "syntax-error";
+	problem.textContent = input.substring(error.start, error.end);
+
+	/* Create a span of characters containing everything after the error. */
+	var suffix = document.createElement("span");
+	suffix.className = "syntax-okay";
+	suffix.textContent = input.substring(error.end);
+
+	box.appendChild(prefix);
+	box.appendChild(problem);
+	box.appendChild(suffix);
+	return box;
+}
+
+/* Function: createDescriptionBox
+ *
+ * Given an error, creates an HTML box containing that error.
+ */
+function createDescriptionBox(error) {
+	var box = document.createElement("div");
+	box.className = "syntax-error-explanation";
+	box.textContent = error.description;
+	return box;
+}
